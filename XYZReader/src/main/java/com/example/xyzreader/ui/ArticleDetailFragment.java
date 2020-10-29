@@ -29,6 +29,7 @@ import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -41,6 +42,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
@@ -77,6 +79,7 @@ public class ArticleDetailFragment extends Fragment implements
     private int mStatusBarFullOpacityBottom;
 
     private AppBarLayout mAppBar;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private NestedScrollView mScrollView;
     private ProgressBar mProgressBar;
     private FloatingActionButton mShareFab;
@@ -184,6 +187,8 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
         mAppBar = (AppBarLayout) mRootView.findViewById(R.id.app_bar_layout);
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar_layout);
+        //TODO mCollapsingToolbarLayout.setTitleEnabled();
         mScrollView = (NestedScrollView) mRootView.findViewById(R.id.scrollview);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.pb_loading_indicator);
         mShareFab = (FloatingActionButton) mRootView.findViewById(R.id.share_floatingActionButton);

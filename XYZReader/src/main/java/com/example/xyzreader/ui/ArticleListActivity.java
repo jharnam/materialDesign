@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
@@ -21,6 +22,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
@@ -236,4 +238,41 @@ public class ArticleListActivity extends AppCompatActivity implements
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }
     }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        Log.e("JKM", "here 2");
+        // Postpone the shared element return transition.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            postponeEnterTransition();
+        }
+
+        // TODO: Call the "scheduleStartPostponedTransition()" method
+        // above when you know for certain that the shared element is
+        // ready for the transition to begin.
+        // Start the postponed transition
+        scheduleStartPostponedTransition(mRecyclerView);
+    }
+
+    private void scheduleStartPostponedTransition(final View sharedElement) {
+        sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                Log.e("TMP", "4");
+
+                sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Log.e("TMP", "5");
+
+                    startPostponedEnterTransition();
+                }
+                return true;
+            }
+        });
+
+    }
+
 }
