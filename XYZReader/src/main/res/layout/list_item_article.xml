@@ -23,7 +23,8 @@
             android:minHeight="100dp"
             android:adjustViewBounds="true"
             android:background="@color/photo_placeholder"
-            android:transitionName="@string/transition_photo"/>
+            android:transitionName="@string/transition_photo"
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/article_title"
