@@ -20,8 +20,12 @@ import java.util.GregorianCalendar;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ShareCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.palette.graphics.Palette;
 import android.text.Html;
@@ -188,7 +192,9 @@ public class ArticleDetailFragment extends Fragment implements
         });
         mAppBar = (AppBarLayout) mRootView.findViewById(R.id.app_bar_layout);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar_layout);
-        //TODO mCollapsingToolbarLayout.setTitleEnabled();
+        mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getActivity() , android.R.color.transparent));
+
+
         mScrollView = (NestedScrollView) mRootView.findViewById(R.id.scrollview);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.pb_loading_indicator);
         mShareFab = (FloatingActionButton) mRootView.findViewById(R.id.share_floatingActionButton);
@@ -257,8 +263,10 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
-            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            //TODO - set toolbar title
+            String myTitle = mCursor.getString(ArticleLoader.Query.TITLE);
+            Log.e("JKM", "title is: "+  myTitle);
+            titleView.setText(myTitle);
+            mCollapsingToolbarLayout.setTitle(myTitle);
             Date publishedDate = parsePublishedDate();
             if (!publishedDate.before(START_OF_EPOCH.getTime())) {
                 bylineView.setText(Html.fromHtml(
