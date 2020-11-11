@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.appcompat.widget.Toolbar;
 import androidx.legacy.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +40,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-    private View mUpButtonContainer;
-    private View mUpButton;
+    private Toolbar mToolBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,21 @@ public class ArticleDetailActivity extends AppCompatActivity
         getLoaderManager().initLoader(0, null, this);
 
 
+        mToolBar = (Toolbar)findViewById(R.id.activity_detail_toolbar);
+        setSupportActionBar(mToolBar);
+        mToolBar.setOnMenuItemClickListener( new Toolbar.OnMenuItemClickListener() {
+
+                                                 @Override
+                                                 public boolean onMenuItemClick(MenuItem item) {
+                                                     Log.e("jkm", "onmenu1");
+                                                     supportFinishAfterTransition();
+                                                     return true;
+                                                 }
+                                             }
+
+        );
+
+
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
@@ -65,13 +81,13 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
+/*            @Override
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
                 mUpButton.animate()
                         .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
                         .setDuration(300);
-            }
+            }*/
 
             @Override
             public void onPageSelected(int position) {
@@ -79,22 +95,10 @@ public class ArticleDetailActivity extends AppCompatActivity
                     mCursor.moveToPosition(position);
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-                updateUpButtonPosition();
+
             }
         });
-
-        mUpButtonContainer = findViewById(R.id.up_container);
-
-        mUpButton = findViewById(R.id.action_up);
-        mUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //onSupportNavigateUp();
-                supportFinishAfterTransition();
-            }
-        });
-
+/*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mUpButtonContainer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @Override
@@ -106,7 +110,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                     return windowInsets;
                 }
             });
-        }
+        }*/
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
@@ -148,18 +152,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPagerAdapter.notifyDataSetChanged();
     }
 
-    public void onUpButtonFloorChanged(long itemId, ArticleDetailFragment fragment) {
-        if (itemId == mSelectedItemId) {
-            mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-            updateUpButtonPosition();
-        }
-    }
-
-    private void updateUpButtonPosition() {
-        int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
-        mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
-    }
-
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -171,7 +163,6 @@ public class ArticleDetailActivity extends AppCompatActivity
             ArticleDetailFragment fragment = (ArticleDetailFragment) object;
             if (fragment != null) {
                 mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-                updateUpButtonPosition();
             }
         }
 
@@ -189,12 +180,18 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e("JKM", "options1");
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
+                Log.e("JKM", "options2");
+
+                onBackPressed();
                 supportFinishAfterTransition();
                 return true;
         }
+        Log.e("JKM", "options3");
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -203,5 +200,13 @@ public class ArticleDetailActivity extends AppCompatActivity
         Log.e("JKM", "here 1");
         setResult(RESULT_OK);
         super.finishAfterTransition();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        Log.e("JKM", "options4");
+
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

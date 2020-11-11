@@ -253,7 +253,19 @@ public class ArticleListActivity extends AppCompatActivity implements
         // above when you know for certain that the shared element is
         // ready for the transition to begin.
         // Start the postponed transition
-        scheduleStartPostponedTransition(mRecyclerView);
+        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                // TODO: figure out why it is necessary to request layout here in order to get a smooth transition.
+                mRecyclerView.requestLayout();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startPostponedEnterTransition();
+                }
+                return true;
+            }
+        });
+        //scheduleStartPostponedTransition(mRecyclerView);
     }
 
     private void scheduleStartPostponedTransition(final View sharedElement) {

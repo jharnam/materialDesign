@@ -8,7 +8,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 
@@ -33,7 +32,6 @@ import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -48,6 +46,7 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -88,6 +87,7 @@ public class ArticleDetailFragment extends Fragment implements
     private ProgressBar mProgressBar;
     private FloatingActionButton mShareFab;
 
+    private Toolbar mToolbar;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
@@ -151,33 +151,7 @@ public class ArticleDetailFragment extends Fragment implements
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         mCoordinatorLayout = (CoordinatorLayout)mRootView.findViewById(R.id.coordinator_layout_outer);
 
-        /*
-        mDrawInsetsFrameLayout = (DrawInsetsFrameLayout)
-                mRootView.findViewById(R.id.draw_insets_frame_layout);
-        mDrawInsetsFrameLayout.setOnInsetsCallback(new DrawInsetsFrameLayout.OnInsetsCallback() {
-            @Override
-            public void onInsetsChanged(Rect insets) {
-                mTopInset = insets.top;
-            }
-        });
-         */
-
-        /*
-        mScrollView = (ObservableScrollView) mRootView.findViewById(R.id.scrollview);
-        mScrollView.setCallbacks(new ObservableScrollView.Callbacks() {
-            @Override
-            public void onScrollChanged() {
-                mScrollY = mScrollView.getScrollY();
-                getActivityCast().onUpButtonFloorChanged(mItemId, ArticleDetailFragment.this);
-                mPhotoContainerView.setTranslationY((int) (mScrollY - mScrollY / PARALLAX_FACTOR));
-                updateStatusBar();
-            }
-        });
-
-         */
-
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
-        //mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
@@ -195,12 +169,17 @@ public class ArticleDetailFragment extends Fragment implements
         mCollapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getActivity() , android.R.color.transparent));
 
 
+        setHasOptionsMenu(true);
+        mToolbar = (Toolbar)mRootView.findViewById(R.id.toolbar);
+
         mScrollView = (NestedScrollView) mRootView.findViewById(R.id.scrollview);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.pb_loading_indicator);
         mShareFab = (FloatingActionButton) mRootView.findViewById(R.id.share_floatingActionButton);
 
         bindViews();
         updateStatusBar();
+        // Show the up button in the actionbar
+        showUpButton();
 
         return mRootView;
     }
@@ -217,7 +196,6 @@ public class ArticleDetailFragment extends Fragment implements
                     (int) (Color.blue(mMutedColor) * 0.9));
         }
         mStatusBarColorDrawable.setColor(color);
-        //mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
     }
 
     static float progress(float v, float min, float max) {
@@ -301,6 +279,23 @@ public class ArticleDetailFragment extends Fragment implements
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
+
+                                mPhotoView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+
+                                    @Override
+                                    public boolean onPreDraw() {
+                                        Log.e("TMP", "4");
+
+                                        mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                            Log.e("TMP", "5");
+
+                                            getActivity().startPostponedEnterTransition();
+                                        }
+                                        return true;
+                                    }
+                                });
+
                                 updateStatusBar();
                             }
                         }
@@ -351,6 +346,7 @@ public class ArticleDetailFragment extends Fragment implements
             mCursor.close();
             mCursor = null;
         }
+        /*
         mRootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 
             @Override
@@ -367,13 +363,16 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
+         */
+
         bindViews();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
-        bindViews();
+
+        //bindViews();
     }
 
     public int getUpButtonFloor() {
@@ -385,6 +384,30 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    private void showUpButton() {
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            Log.d("JKM", "jkm: actionBar is not null");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("jkm", "fragment menu1");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getActivity().finishAfterTransition();
+                }
+                else {
+                    //TODO - is this right??
+                    getActivity().onBackPressed();
+                }
+            }
+        });
     }
 
 
