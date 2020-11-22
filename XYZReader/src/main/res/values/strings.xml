@@ -10,5 +10,7 @@
     <string name="up">Up</string>
     <string name="transition_photo">photo transition</string>
     <string name="article_image">Image for the Article</string>
+    <string name="placeholder_article_title">Some cool article title</string>
+    <string name="placeholder_article_subtitle">Some cool article subtitle</string>
 
 </resources>
