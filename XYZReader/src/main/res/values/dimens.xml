@@ -8,11 +8,15 @@
     <dimen name="fab_press_translation_z">12dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="app_bar_height">296dp</dimen>
+    <dimen name="app_bar_elevation">8dp</dimen>
+
     <dimen name="recycler_view_padding">4dp</dimen>
     <dimen name="card_view_corner_radius">9dp</dimen>
     <dimen name="item_text_padding">16dp</dimen>
     <dimen name="item_text_padding_bottom">4dp</dimen>
     <dimen name="content_padding">16dp</dimen>
+
 
 
 </resources>
