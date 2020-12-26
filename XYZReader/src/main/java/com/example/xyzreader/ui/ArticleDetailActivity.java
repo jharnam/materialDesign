@@ -59,7 +59,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         getLoaderManager().initLoader(0, null, this);
 
 
-        mToolBar = (Toolbar)findViewById(R.id.activity_detail_toolbar);
+        mToolBar = findViewById(R.id.activity_detail_toolbar);
         setSupportActionBar(mToolBar);
         mToolBar.setOnMenuItemClickListener( new Toolbar.OnMenuItemClickListener() {
 
