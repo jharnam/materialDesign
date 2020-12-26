@@ -31,6 +31,7 @@ import com.example.xyzreader.data.ItemsContract;
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String LOG_TAG = ArticleDetailActivity.class.getSimpleName();
     private Cursor mCursor;
     private long mStartId;
 
@@ -64,7 +65,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
                                                  @Override
                                                  public boolean onMenuItemClick(MenuItem item) {
-                                                     Log.e("jkm", "onmenu1");
+                                                     Log.e(LOG_TAG, "onmenu1");
                                                      supportFinishAfterTransition();
                                                      return true;
                                                  }
